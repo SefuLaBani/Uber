@@ -182,7 +182,12 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
 
                     float distance = loc1.distanceTo(loc2);
 
-                    mRequest.setText("Driver Found: " + String.valueOf(distance));
+                    if (distance < 100) {
+                        mRequest.setText("Driver's here");
+                    } else {
+                        mRequest.setText("Driver Found: " + String.valueOf(distance));
+                    }
+
                     mDriverMarker = mMap.addMarker(new MarkerOptions().position(driverLatLng).title("your driver"));
                 }
             }
