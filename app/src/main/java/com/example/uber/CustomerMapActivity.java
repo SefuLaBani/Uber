@@ -227,7 +227,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                         mRequest.setText("Driver Found: " + String.valueOf(distance));
                     }
 
-                    mDriverMarker = mMap.addMarker(new MarkerOptions().position(driverLatLng).title("your driver"));
+                    mDriverMarker = mMap.addMarker(new MarkerOptions().position(driverLatLng).title("your driver").icon(BitmapDescriptorFactory.fromResource(R.mipmap.pickup)));
                 }
             }
 
