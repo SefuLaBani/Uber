@@ -1,0 +1,308 @@
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    package=\"com.example.uber\">\r\n    <!--\r\n         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use\r\n         Google Maps Android API v2, but you must specify either coarse or fine\r\n         location permissions for the 'MyLocation' functionality.\r\n    -->\r\n    <uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\" />\r\n    <uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\" />\r\n    <uses-permission android:name=\"android.permission.INTERNET\" />\r\n\r\n    <application\r\n        android:allowBackup=\"true\"\r\n        android:icon=\"@mipmap/ic_launcher\"\r\n        android:label=\"@string/app_name\"\r\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\r\n        android:supportsRtl=\"true\"\r\n        android:theme=\"@style/AppTheme\">\r\n        <activity android:name=\".CustomerSettingsActivity\"></activity>\r\n        <activity android:name=\".CustomerMapActivity\" />\r\n        <!--\r\n             The API key for Google Maps-based APIs is defined as a string resource.\r\n             (See the file \"res/values/google_maps_api.xml\").\r\n             Note that the API key is linked to the encryption key used to sign the APK.\r\n             You need a different API key for each encryption key, including the release key that is used to\r\n             sign the APK for publishing.\r\n             You can define the keys for the debug and release targets in src/debug/ and src/release/.\r\n        -->\r\n        <meta-data\r\n            android:name=\"com.google.android.geo.API_KEY\"\r\n            android:value=\"@string/google_maps_key\" />\r\n\r\n        <activity\r\n            android:name=\".DriverMapActivity\"\r\n            android:label=\"@string/title_activity_driver_map\" />\r\n        <activity android:name=\".CustomerLoginActivity\" />\r\n        <activity android:name=\".DriverLoginActivity\" />\r\n        <activity android:name=\".MainActivity\">\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.MAIN\" />\r\n\r\n                <category android:name=\"android.intent.category.LAUNCHER\" />\r\n            </intent-filter>\r\n        </activity>\r\n    </application>\r\n\r\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/AndroidManifest.xml	(revision 81a61e7abcbcf45d181500fdc4a76c68d9adb325)
++++ app/src/main/AndroidManifest.xml	(date 1556798983218)
+@@ -9,6 +9,7 @@
+     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+     <uses-permission android:name="android.permission.INTERNET" />
++    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+ 
+     <application
+         android:allowBackup="true"
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>apply plugin: 'com.android.application'\r\n\r\nandroid {\r\n    compileSdkVersion 28\r\n    defaultConfig {\r\n        applicationId \"com.example.uber\"\r\n        minSdkVersion 21\r\n        targetSdkVersion 28\r\n        versionCode 1\r\n        versionName \"1.0\"\r\n        testInstrumentationRunner \"android.support.test.runner.AndroidJUnitRunner\"\r\n    }\r\n    buildTypes {\r\n        release {\r\n            minifyEnabled false\r\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\r\n        }\r\n    }\r\n}\r\n\r\ndependencies {\r\n    implementation fileTree(dir: 'libs', include: ['*.jar'])\r\n    //noinspection GradleCompatible\r\n    implementation 'com.android.support:appcompat-v7:28.0.0'\r\n    implementation 'com.android.support.constraint:constraint-layout:1.1.3'\r\n    implementation 'com.google.firebase:firebase-core:16.0.1'\r\n    implementation 'com.google.firebase:firebase-storage:16.1.0'\r\n    implementation 'com.github.bumptech.glide:glide:4.0.0'\r\n\r\n    implementation 'com.google.firebase:firebase-core:16.0.8'\r\n    implementation 'com.google.firebase:firebase-database:16.1.0'\r\n    implementation 'com.google.firebase:firebase-auth:16.2.1'\r\n    implementation 'com.google.android.gms:play-services-location:16.0.0'\r\n    implementation 'com.firebase:geofire-android:2.1.1'\r\n\r\n    implementation 'com.google.android.gms:play-services-maps:16.1.0'\r\n    testImplementation 'junit:junit:4.12'\r\n    androidTestImplementation 'com.android.support.test:runner:1.0.2'\r\n    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'\r\n}\r\napply plugin: 'com.google.gms.google-services'\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/build.gradle	(revision 81a61e7abcbcf45d181500fdc4a76c68d9adb325)
++++ app/build.gradle	(date 1556809616008)
+@@ -26,6 +26,8 @@
+     implementation 'com.google.firebase:firebase-core:16.0.1'
+     implementation 'com.google.firebase:firebase-storage:16.1.0'
+     implementation 'com.github.bumptech.glide:glide:4.0.0'
++    implementation 'com.android.support:cardview-v7:21.0.+'
++    implementation 'com.google.android.gms:play-services-places:16.1.0'
+ 
+     implementation 'com.google.firebase:firebase-core:16.0.8'
+     implementation 'com.google.firebase:firebase-database:16.1.0'
+Index: app/src/main/java/com/example/uber/DriverMapActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.uber;\r\n\r\nimport android.Manifest;\r\nimport android.content.Intent;\r\nimport android.content.pm.PackageManager;\r\nimport android.location.Location;\r\nimport android.location.LocationListener;\r\nimport android.support.annotation.NonNull;\r\nimport android.support.annotation.Nullable;\r\nimport android.support.v4.app.ActivityCompat;\r\nimport android.support.v4.app.FragmentActivity;\r\nimport android.os.Bundle;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.ImageView;\r\nimport android.widget.LinearLayout;\r\nimport android.widget.TextView;\r\n\r\nimport com.bumptech.glide.Glide;\r\nimport com.firebase.geofire.GeoFire;\r\nimport com.firebase.geofire.GeoLocation;\r\nimport com.google.android.gms.common.ConnectionResult;\r\nimport com.google.android.gms.common.api.GoogleApiClient;\r\nimport com.google.android.gms.location.LocationRequest;\r\nimport com.google.android.gms.location.LocationServices;\r\nimport com.google.android.gms.maps.CameraUpdateFactory;\r\nimport com.google.android.gms.maps.GoogleMap;\r\nimport com.google.android.gms.maps.OnMapReadyCallback;\r\nimport com.google.android.gms.maps.SupportMapFragment;\r\nimport com.google.android.gms.maps.model.BitmapDescriptor;\r\nimport com.google.android.gms.maps.model.BitmapDescriptorFactory;\r\nimport com.google.android.gms.maps.model.LatLng;\r\nimport com.google.android.gms.maps.model.Marker;\r\nimport com.google.android.gms.maps.model.MarkerOptions;\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\n\r\nimport java.util.List;\r\nimport java.util.ListIterator;\r\nimport java.util.Map;\r\n\r\npublic class DriverMapActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {\r\n\r\n    private GoogleMap mMap;\r\n    GoogleApiClient mGoogleApiClient;\r\n    Location mLastLocation;\r\n    LocationRequest mLocationRequest;\r\n\r\n    private Button mLogout;\r\n\r\n    private String customerId = \"\";\r\n\r\n    private Boolean isLogginOut = false;\r\n\r\n    private SupportMapFragment mapFragment;\r\n\r\n    private LinearLayout mCustomerInfo;\r\n\r\n    private ImageView mCustomerProfileImage;\r\n\r\n    private TextView mCustomerName, mCustomerPhone;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_driver_map);\r\n        // Obtain the SupportMapFragment and get notified when the map is ready to be used.\r\n        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()\r\n                .findFragmentById(R.id.map);\r\n        mapFragment.getMapAsync(this);\r\n\r\n        mCustomerInfo = (LinearLayout) findViewById(R.id.customerInfo);\r\n\r\n        mCustomerProfileImage = (ImageView) findViewById(R.id.customerProfileImage);\r\n\r\n        mCustomerName = (TextView) findViewById(R.id.customerName);\r\n        mCustomerPhone = (TextView) findViewById(R.id.customerPhone);\r\n\r\n        mLogout = (Button) findViewById(R.id.logout);\r\n        mLogout.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                isLogginOut = true;\r\n\r\n                disconnectDriver();\r\n\r\n                FirebaseAuth.getInstance().signOut();\r\n                Intent intent = new Intent(DriverMapActivity.this, MainActivity.class);\r\n                startActivity(intent);\r\n                finish();\r\n                return;\r\n            }\r\n        });\r\n\r\n        getAssignedCustomer();\r\n    }\r\n\r\n    private void getAssignedCustomer(){\r\n        String driverId = FirebaseAuth.getInstance().getCurrentUser().getUid();\r\n        final DatabaseReference assignedCustomerRef = FirebaseDatabase.getInstance().getReference().child(\"Users\").child(\"Drivers\").child(driverId).child(\"customerRideId\");\r\n        assignedCustomerRef.addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(DataSnapshot dataSnapshot) {\r\n                if(dataSnapshot.exists()){\r\n                    customerId = dataSnapshot.getValue().toString();\r\n                    getAssignedCustomerPickupLocation();\r\n                    getAssignedCustomerInfo();\r\n                } else {\r\n                    customerId = \"\";\r\n                    if (pickupMarker != null) {\r\n                        pickupMarker.remove();\r\n                    }\r\n                    if (assignedCustomerPickupLocationRefListener != null) {\r\n                        assignedCustomerRef.removeEventListener(assignedCustomerPickupLocationRefListener);\r\n                    }\r\n                    mCustomerInfo.setVisibility(View.GONE);\r\n                    mCustomerName.setText(\"\");\r\n                    mCustomerPhone.setText(\"\");\r\n                    mCustomerProfileImage.setImageResource(R.mipmap.avatar);\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(DatabaseError databaseError) {\r\n            }\r\n        });\r\n    }\r\n\r\n    Marker pickupMarker;\r\n    private DatabaseReference assignedCustomerPickupLocationRef;\r\n    private ValueEventListener assignedCustomerPickupLocationRefListener;\r\n    private void getAssignedCustomerPickupLocation() {\r\n        assignedCustomerPickupLocationRef = FirebaseDatabase.getInstance().getReference().child(\"customerRequest\").child(customerId).child(\"l\");\r\n        assignedCustomerPickupLocationRefListener = assignedCustomerPickupLocationRef.addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {\r\n                if (dataSnapshot.exists() && !customerId.equals(\"\")) {\r\n                    List<Object> map = (List<Object>) dataSnapshot.getValue();\r\n                    double locationLat = 0;\r\n                    double locationLng = 0;\r\n                    if (map.get(0) != null) {\r\n                        locationLat = Double.parseDouble(map.get(0).toString());\r\n                    }\r\n                    if (map.get(1) != null) {\r\n                        locationLng = Double.parseDouble(map.get(1).toString());\r\n                    }\r\n                    LatLng driverLatLng = new LatLng(locationLat, locationLng);\r\n                    pickupMarker = mMap.addMarker(new MarkerOptions().position(driverLatLng).title(\"pickup location\").icon(BitmapDescriptorFactory.fromResource(R.mipmap.pickup)));\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError databaseError) {\r\n\r\n            }\r\n        });\r\n    }\r\n\r\n    private void getAssignedCustomerInfo() {\r\n        mCustomerInfo.setVisibility(View.VISIBLE);\r\n        DatabaseReference mCustomerDatabase = FirebaseDatabase.getInstance().getReference().child(\"Users\").child(\"Customers\").child(customerId);\r\n        mCustomerDatabase.addListenerForSingleValueEvent(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {\r\n                if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {\r\n                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();\r\n                    if (map.get(\"name\") != null) {\r\n                        mCustomerName.setText(map.get(\"name\").toString());\r\n                    }\r\n                    if (map.get(\"phone\") != null) {\r\n                        mCustomerPhone.setText(map.get(\"phone\").toString());\r\n                    }\r\n                    if (map.get(\"profileImageUrl\") != null) {\r\n                        Glide.with(getApplication()).load(map.get(\"profileImageUrl\").toString()).into(mCustomerProfileImage);\r\n                    }\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError databaseError) {\r\n            }\r\n        });\r\n    }\r\n\r\n    @Override\r\n    public void onMapReady(GoogleMap googleMap) {\r\n        mMap = googleMap;\r\n\r\n        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {\r\n            return;\r\n        }\r\n        buildGoogleApiClient();\r\n        mMap.setMyLocationEnabled(true);\r\n    }\r\n\r\n    protected synchronized void buildGoogleApiClient() {\r\n        mGoogleApiClient = new GoogleApiClient.Builder(this)\r\n                .addConnectionCallbacks(this)\r\n                .addOnConnectionFailedListener(this)\r\n                .addApi(LocationServices.API)\r\n                .build();\r\n        mGoogleApiClient.connect();\r\n    }\r\n\r\n    @Override\r\n    public void onLocationChanged(Location location) {\r\n        if (getApplicationContext() != null) {\r\n\r\n            mLastLocation = location;\r\n            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());\r\n            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));\r\n            mMap.animateCamera(CameraUpdateFactory.zoomTo(11));\r\n\r\n            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();\r\n            DatabaseReference refAvailable = FirebaseDatabase.getInstance().getReference(\"driversAvailable\");\r\n            DatabaseReference refWorking = FirebaseDatabase.getInstance().getReference(\"driversWorking\");\r\n            GeoFire geoFireAvailable = new GeoFire(refAvailable);\r\n            GeoFire geoFireWorking = new GeoFire(refWorking);\r\n\r\n\r\n            switch (customerId) {\r\n                case \"\":\r\n                    geoFireWorking.removeLocation(userId);\r\n                    geoFireAvailable.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()));\r\n\r\n                    break;\r\n\r\n                default:\r\n                    geoFireAvailable.removeLocation(userId);\r\n                    geoFireWorking.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()));\r\n                    break ;\r\n            }\r\n        }\r\n    }\r\n\r\n\r\n    @Override\r\n    public void onConnected(@Nullable Bundle bundle) {\r\n        mLocationRequest = new LocationRequest();\r\n        mLocationRequest.setInterval(1000);\r\n        mLocationRequest.setFastestInterval(1000);\r\n        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);\r\n\r\n        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {\r\n            return;\r\n        }\r\n        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);\r\n    }\r\n\r\n    @Override\r\n    public void onConnectionSuspended(int i) {\r\n\r\n    }\r\n\r\n    @Override\r\n    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {\r\n\r\n    }\r\n\r\n    private void disconnectDriver() {\r\n        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);\r\n        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();\r\n        DatabaseReference ref = FirebaseDatabase.getInstance().getReference(\"driversAvailable\");\r\n\r\n        GeoFire geoFire = new GeoFire(ref);\r\n        geoFire.removeLocation(userId);\r\n    }\r\n\r\n    @Override\r\n    protected void onStop() {\r\n        super.onStop();\r\n        if (!isLogginOut) {\r\n            disconnectDriver();\r\n        }\r\n\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/uber/DriverMapActivity.java	(revision 81a61e7abcbcf45d181500fdc4a76c68d9adb325)
++++ app/src/main/java/com/example/uber/DriverMapActivity.java	(date 1556802675754)
+@@ -62,7 +62,7 @@
+ 
+     private ImageView mCustomerProfileImage;
+ 
+-    private TextView mCustomerName, mCustomerPhone;
++    private TextView mCustomerName, mCustomerPhone, mCustomerDestination;
+ 
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+@@ -79,6 +79,8 @@
+ 
+         mCustomerName = (TextView) findViewById(R.id.customerName);
+         mCustomerPhone = (TextView) findViewById(R.id.customerPhone);
++        mCustomerDestination = (TextView) findViewById(R.id.customerDestination);
++
+ 
+         mLogout = (Button) findViewById(R.id.logout);
+         mLogout.setOnClickListener(new View.OnClickListener() {
+@@ -101,13 +103,14 @@
+ 
+     private void getAssignedCustomer(){
+         String driverId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+-        final DatabaseReference assignedCustomerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverId).child("customerRideId");
++        final DatabaseReference assignedCustomerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverId).child("customerRequest").child("customerRideId");
+         assignedCustomerRef.addValueEventListener(new ValueEventListener() {
+             @Override
+             public void onDataChange(DataSnapshot dataSnapshot) {
+                 if(dataSnapshot.exists()){
+                     customerId = dataSnapshot.getValue().toString();
+                     getAssignedCustomerPickupLocation();
++                    getAssignedCustomerDestination();
+                     getAssignedCustomerInfo();
+                 } else {
+                     customerId = "";
+@@ -120,6 +123,7 @@
+                     mCustomerInfo.setVisibility(View.GONE);
+                     mCustomerName.setText("");
+                     mCustomerPhone.setText("");
++                    mCustomerDestination.setText("Destination: --");
+                     mCustomerProfileImage.setImageResource(R.mipmap.avatar);
+                 }
+             }
+@@ -160,6 +164,26 @@
+         });
+     }
+ 
++    private void getAssignedCustomerDestination(){
++        String driverId = FirebaseAuth.getInstance().getCurrentUser().getUid();
++        final DatabaseReference assignedCustomerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverId).child("customerRequest").child("destination");
++        assignedCustomerRef.addListenerForSingleValueEvent(new ValueEventListener() {
++            @Override
++            public void onDataChange(DataSnapshot dataSnapshot) {
++                if(dataSnapshot.exists()){
++                    String destination = dataSnapshot.getValue().toString();
++                    mCustomerDestination.setText("Destination: " + destination);
++                } else {
++                    mCustomerDestination.setText("Destination: --");
++                }
++            }
++
++            @Override
++            public void onCancelled(DatabaseError databaseError) {
++            }
++        });
++    }
++
+     private void getAssignedCustomerInfo() {
+         mCustomerInfo.setVisibility(View.VISIBLE);
+         DatabaseReference mCustomerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(customerId);
+Index: app/src/main/res/layout/activity_driver_map.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<FrameLayout\r\n    xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".DriverMapActivity\">\r\n\r\n    <Button\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:id=\"@+id/logout\"\r\n        android:text=\"logout\"/>\r\n    <fragment\r\n    android:id=\"@+id/map\"\r\n    android:name=\"com.google.android.gms.maps.SupportMapFragment\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"/>\r\n    <LinearLayout\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:id=\"@+id/customerInfo\"\r\n        android:layout_gravity=\"bottom\"\r\n        android:orientation=\"horizontal\"\r\n        android:background=\"@android:color/white\"\r\n        android:visibility=\"gone\">\r\n        <ImageView\r\n            android:layout_width=\"100sp\"\r\n            android:layout_height=\"100sp\"\r\n            android:id=\"@+id/customerProfileImage\"\r\n            android:src=\"@mipmap/avatar\"\r\n            android:padding=\"20sp\"/>\r\n        <LinearLayout\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:orientation=\"vertical\"\r\n            android:paddingLeft=\"40sp\">\r\n            <TextView\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:id=\"@+id/customerName\"\r\n                android:paddingBottom=\"10sp\"\r\n                android:paddingTop=\"20sp\"/>\r\n            <TextView\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:id=\"@+id/customerPhone\"\r\n                android:paddingBottom=\"10sp\"\r\n                android:paddingTop=\"20sp\"/>\r\n\r\n        </LinearLayout>\r\n\r\n    </LinearLayout>\r\n</FrameLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/activity_driver_map.xml	(revision 81a61e7abcbcf45d181500fdc4a76c68d9adb325)
++++ app/src/main/res/layout/activity_driver_map.xml	(date 1556801653046)
+@@ -38,6 +38,12 @@
+             <TextView
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
++                android:id="@+id/customerDestination"
++                android:paddingBottom="10sp"
++                android:text="Destination --"/>
++            <TextView
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content"
+                 android:id="@+id/customerName"
+                 android:paddingBottom="10sp"
+                 android:paddingTop="20sp"/>
+Index: app/src/debug/res/values/google_maps_api.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><resources>\r\n    <!--\r\n    TODO: Before you run your application, you need a Google Maps API key.\r\n\r\n    To get one, follow this link, follow the directions and press \"Create\" at the end:\r\n\r\n    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=68:DA:86:68:44:2C:C3:77:DB:17:CC:37:6A:2F:BB:FC:60:CF:A8:5E%3Bcom.example.uber\r\n\r\n    You can also add your credentials to an existing key, using these values:\r\n\r\n    Package name:\r\n    68:DA:86:68:44:2C:C3:77:DB:17:CC:37:6A:2F:BB:FC:60:CF:A8:5E\r\n\r\n    SHA-1 certificate fingerprint:\r\n    68:DA:86:68:44:2C:C3:77:DB:17:CC:37:6A:2F:BB:FC:60:CF:A8:5E\r\n\r\n    Alternatively, follow the directions here:\r\n    https://developers.google.com/maps/documentation/android/start#get-key\r\n\r\n    Once you have your key (it starts with \"AIza\"), replace the \"google_maps_key\"\r\n    string in this file.\r\n    -->\r\n    <string name=\"google_maps_key\" templateMergeStrategy=\"preserve\" translatable=\"false\">AIzaSyAgPTLhmL-9-xYSkVxrW09AriOJxIrnm30</string>\r\n</resources>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/debug/res/values/google_maps_api.xml	(revision 81a61e7abcbcf45d181500fdc4a76c68d9adb325)
++++ app/src/debug/res/values/google_maps_api.xml	(date 1556810237131)
+@@ -20,5 +20,5 @@
+     Once you have your key (it starts with "AIza"), replace the "google_maps_key"
+     string in this file.
+     -->
+-    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyAgPTLhmL-9-xYSkVxrW09AriOJxIrnm30</string>
++    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyAbNhwXmmpQQhLJz4XeDLyW5UlJ99nSyL8</string>
+ </resources>
+Index: app/src/main/res/layout/activity_customer_map.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<FrameLayout\r\n    xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".CustomerLoginActivity\">\r\n\r\n    <Button\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:id=\"@+id/logout\"\r\n        android:text=\"logout\"/>\r\n\r\n    <Button\r\n\r\n        android:layout_gravity=\"right\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:id=\"@+id/settings\"\r\n        android:layout_marginTop=\"50sp\"\r\n        android:text=\"Settings\"/>\r\n\r\n    <fragment\r\n        android:id=\"@+id/map\"\r\n        android:name=\"com.google.android.gms.maps.SupportMapFragment\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"match_parent\"/>\r\n\r\n    <Button\r\n        android:id=\"@+id/request\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_gravity=\"bottom\"\r\n        android:text=\"call Uber\" />\r\n</FrameLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/activity_customer_map.xml	(revision 81a61e7abcbcf45d181500fdc4a76c68d9adb325)
++++ app/src/main/res/layout/activity_customer_map.xml	(date 1556805901937)
+@@ -6,26 +6,44 @@
+     android:layout_height="match_parent"
+     tools:context=".CustomerLoginActivity">
+ 
+-    <Button
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:id="@+id/logout"
+-        android:text="logout"/>
++
++
++    <fragment
++        android:id="@+id/map"
++        android:name="com.google.android.gms.maps.SupportMapFragment"
++        android:layout_width="match_parent"
++        android:layout_height="match_parent"/>
++
++    <RelativeLayout
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content">
++        <Button
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:id="@+id/logout"
++            android:text="logout"/>
+ 
+-    <Button
+-
+-        android:layout_gravity="right"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:id="@+id/settings"
+-        android:layout_marginTop="50sp"
+-        android:text="Settings"/>
+-
+-    <fragment
+-        android:id="@+id/map"
+-        android:name="com.google.android.gms.maps.SupportMapFragment"
+-        android:layout_width="match_parent"
+-        android:layout_height="match_parent"/>
++        <Button
++            android:layout_alignParentRight="true"
++            android:layout_gravity="right"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:id="@+id/settings"
++            android:text="Settings"/>
++        <android.support.v7.widget.CardView
++            android:layout_below="@+id/settings"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_margin="20sp">
++            <fragment
++            android:id="@+id/place_autocomplete_fragment"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
++            />
++        </android.support.v7.widget.CardView>
++    </RelativeLayout>
++
+ 
+     <Button
+         android:id="@+id/request"
+@@ -33,4 +51,6 @@
+         android:layout_height="wrap_content"
+         android:layout_gravity="bottom"
+         android:text="call Uber" />
+-</FrameLayout>
+\ No newline at end of file
++</FrameLayout>
++
++    <!---->
+\ No newline at end of file
+Index: app/src/main/java/com/example/uber/CustomerMapActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.uber;\r\n\r\nimport android.Manifest;\r\nimport android.content.Intent;\r\nimport android.content.pm.PackageManager;\r\nimport android.location.Location;\r\nimport android.support.annotation.NonNull;\r\nimport android.support.annotation.Nullable;\r\nimport android.support.v4.app.ActivityCompat;\r\nimport android.support.v4.app.FragmentActivity;\r\nimport android.os.Bundle;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\n\r\nimport com.firebase.geofire.GeoFire;\r\nimport com.firebase.geofire.GeoLocation;\r\nimport com.firebase.geofire.GeoQuery;\r\nimport com.firebase.geofire.GeoQueryEventListener;\r\nimport com.google.android.gms.common.ConnectionResult;\r\nimport com.google.android.gms.common.api.GoogleApiClient;\r\nimport com.google.android.gms.location.LocationRequest;\r\nimport com.google.android.gms.location.LocationServices;\r\nimport com.google.android.gms.maps.CameraUpdateFactory;\r\nimport com.google.android.gms.maps.GoogleMap;\r\nimport com.google.android.gms.maps.OnMapReadyCallback;\r\nimport com.google.android.gms.maps.SupportMapFragment;\r\nimport com.google.android.gms.maps.model.BitmapDescriptorFactory;\r\nimport com.google.android.gms.maps.model.LatLng;\r\nimport com.google.android.gms.maps.model.Marker;\r\nimport com.google.android.gms.maps.model.MarkerOptions;\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\n\r\nimport java.util.HashMap;\r\nimport java.util.List;\r\n\r\npublic class CustomerMapActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {\r\n\r\n    private GoogleMap mMap;\r\n    GoogleApiClient mGoogleApiClient;\r\n    Location mLastLocation;\r\n    LocationRequest mLocationRequest;\r\n\r\n    private Button mLogout, mRequest, mSettings;\r\n\r\n    private LatLng pickupLocation;\r\n\r\n    private Boolean requestBol = false;\r\n\r\n    private Marker pickupMarker;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_customer_map);\r\n        // Obtain the SupportMapFragment and get notified when the map is ready to be used.\r\n        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()\r\n                .findFragmentById(R.id.map);\r\n        mapFragment.getMapAsync(this);\r\n\r\n        mLogout = (Button) findViewById(R.id.logout);\r\n        mRequest = (Button) findViewById(R.id.request);\r\n        mSettings = (Button) findViewById(R.id.settings);\r\n        mLogout.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                FirebaseAuth.getInstance().signOut();\r\n                Intent intent = new Intent(CustomerMapActivity.this, MainActivity.class);\r\n                startActivity(intent);\r\n                finish();\r\n                return;\r\n            }\r\n        });\r\n\r\n        mRequest.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                if (requestBol){\r\n                    requestBol = false;\r\n                    geoQuery.removeAllListeners();\r\n                    driverLocationRef.removeEventListener(driverLocationRefListener);\r\n\r\n                    if (driverFoundID != null) {\r\n                        DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child(\"Users\").child(\"Drivers\").child(driverFoundID);\r\n                        driverRef.setValue(true);\r\n                        driverFoundID = null;\r\n                    }\r\n                    driverFound = false;\r\n                    radius = 1;\r\n                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();\r\n\r\n                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference(\"customerRequest\");\r\n                    GeoFire geoFire = new GeoFire(ref);\r\n                    geoFire.removeLocation(userId);\r\n\r\n                    if (mDriverMarker != null) {\r\n                        mDriverMarker.remove();\r\n                    }\r\n\r\n                    if (pickupMarker != null) {\r\n                        pickupMarker.remove();\r\n                    }\r\n\r\n\r\n                    mRequest.setText(\"call Uber\");\r\n\r\n\r\n                } else {\r\n                    requestBol = true;\r\n                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();\r\n\r\n                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference(\"customerRequest\");\r\n                    GeoFire geoFire = new GeoFire(ref);\r\n                    geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));\r\n\r\n                    pickupLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());\r\n                    pickupMarker = mMap.addMarker(new MarkerOptions().position(pickupLocation).title(\"Pickup here\").icon(BitmapDescriptorFactory.fromResource(R.mipmap.pickup)));\r\n\r\n                    mRequest.setText(\"Getting your driver...wait!\");\r\n\r\n                    getClosestDriver();\r\n                }\r\n            }\r\n        });\r\n        mSettings.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                Intent intent = new Intent(CustomerMapActivity.this, CustomerSettingsActivity.class);\r\n                startActivity(intent);\r\n                return;\r\n            }\r\n        });\r\n    }\r\n    private int radius = 1;\r\n    private Boolean driverFound = false;\r\n    private String driverFoundID;\r\n\r\n    GeoQuery geoQuery;\r\n    private void getClosestDriver() {\r\n        DatabaseReference driverLocation = FirebaseDatabase.getInstance().getReference().child(\"driversAvailable\");\r\n\r\n        GeoFire geoFire = new GeoFire(driverLocation);\r\n\r\n        geoQuery = geoFire.queryAtLocation(new GeoLocation(pickupLocation.latitude, pickupLocation.longitude), radius);\r\n        geoQuery.removeAllListeners();\r\n\r\n        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {\r\n            @Override\r\n            public void onKeyEntered(String key, GeoLocation location) {\r\n                if (!driverFound && requestBol)\r\n                {\r\n                    driverFound = true;\r\n                    driverFoundID = key;\r\n\r\n                    DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child(\"Users\").child(\"Drivers\").child(driverFoundID);\r\n                    String customerId = FirebaseAuth.getInstance().getCurrentUser().getUid();\r\n                    HashMap map = new HashMap();\r\n                    map.put(\"customerRideId\", customerId);\r\n                    driverRef.updateChildren(map);\r\n\r\n                    getDriverLocation();\r\n                    mRequest.setText(\"Looking for Driver Location...\");\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onKeyExited(String key) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onKeyMoved(String key, GeoLocation location) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onGeoQueryReady() {\r\n                if (!driverFound)\r\n                {\r\n                    radius++;\r\n                    getClosestDriver();\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onGeoQueryError(DatabaseError error) {\r\n\r\n            }\r\n        });\r\n    }\r\n\r\n    private Marker mDriverMarker;\r\n    private DatabaseReference driverLocationRef;\r\n    private ValueEventListener driverLocationRefListener;\r\n    private void getDriverLocation() {\r\n        driverLocationRef = FirebaseDatabase.getInstance().getReference().child(\"driversWorking\").child(driverFoundID).child(\"l\");\r\n        driverLocationRefListener = driverLocationRef.addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {\r\n                if (dataSnapshot.exists() && requestBol)\r\n                {\r\n                    List<Object> map = (List<Object>) dataSnapshot.getValue();\r\n                    double locationLat = 0;\r\n                    double locationLng = 0;\r\n                    mRequest.setText(\"Driver Found\");\r\n                    if (map.get(0) != null)\r\n                    {\r\n                        locationLat = Double.parseDouble(map.get(0).toString());\r\n                    }\r\n                    if (map.get(1) != null)\r\n                    {\r\n                        locationLng = Double.parseDouble(map.get(1).toString());\r\n                    }\r\n                    LatLng driverLatLng = new LatLng(locationLat, locationLng);\r\n                    if (mDriverMarker != null)\r\n                    {\r\n                        //mDriverMarker.remove();\r\n                    }\r\n                    Location loc1 = new Location(\"\");\r\n                    loc1.setLatitude(pickupLocation.latitude);\r\n                    loc1.setLongitude(pickupLocation.longitude);\r\n\r\n                    Location loc2 = new Location(\"\");\r\n                    loc2.setLatitude(driverLatLng.latitude);\r\n                    loc2.setLongitude(driverLatLng.longitude);\r\n\r\n                    float distance = loc1.distanceTo(loc2);\r\n\r\n                    if (distance < 100) {\r\n                        mRequest.setText(\"Driver's here\");\r\n                    } else {\r\n                        mRequest.setText(\"Driver Found: \" + String.valueOf(distance));\r\n                    }\r\n\r\n                    mDriverMarker = mMap.addMarker(new MarkerOptions().position(driverLatLng).title(\"your driver\").icon(BitmapDescriptorFactory.fromResource(R.mipmap.pickup)));\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError databaseError) {\r\n\r\n            }\r\n        });\r\n    }\r\n\r\n\r\n    @Override\r\n    public void onMapReady(GoogleMap googleMap) {\r\n        mMap = googleMap;\r\n\r\n        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {\r\n            return;\r\n        }\r\n        buildGoogleApiClient();\r\n        mMap.setMyLocationEnabled(true);\r\n    }\r\n\r\n    protected synchronized void buildGoogleApiClient() {\r\n        mGoogleApiClient = new GoogleApiClient.Builder(this)\r\n                .addConnectionCallbacks(this)\r\n                .addOnConnectionFailedListener(this)\r\n                .addApi(LocationServices.API)\r\n                .build();\r\n        mGoogleApiClient.connect();\r\n    }\r\n\r\n    @Override\r\n    public void onLocationChanged(Location location) {\r\n        mLastLocation = location;\r\n\r\n        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());\r\n\r\n        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));\r\n        mMap.animateCamera(CameraUpdateFactory.zoomTo(11));\r\n    }\r\n\r\n    @Override\r\n    public void onConnected(@Nullable Bundle bundle) {\r\n        mLocationRequest = new LocationRequest();\r\n        mLocationRequest.setInterval(1000);\r\n        mLocationRequest.setFastestInterval(1000);\r\n        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);\r\n\r\n        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {\r\n            return;\r\n        }\r\n        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);\r\n    }\r\n\r\n    @Override\r\n    public void onConnectionSuspended(int i) {\r\n\r\n    }\r\n\r\n    @Override\r\n    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {\r\n\r\n    }\r\n\r\n    @Override\r\n    protected void onStop() {\r\n        super.onStop();\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/uber/CustomerMapActivity.java	(revision 81a61e7abcbcf45d181500fdc4a76c68d9adb325)
++++ app/src/main/java/com/example/uber/CustomerMapActivity.java	(date 1556801521279)
+@@ -9,6 +9,7 @@
+ import android.support.v4.app.ActivityCompat;
+ import android.support.v4.app.FragmentActivity;
+ import android.os.Bundle;
++import android.util.Log;
+ import android.view.View;
+ import android.widget.Button;
+ 
+@@ -18,8 +19,12 @@
+ import com.firebase.geofire.GeoQueryEventListener;
+ import com.google.android.gms.common.ConnectionResult;
+ import com.google.android.gms.common.api.GoogleApiClient;
++import com.google.android.gms.common.api.Status;
+ import com.google.android.gms.location.LocationRequest;
+ import com.google.android.gms.location.LocationServices;
++import com.google.android.gms.location.places.Place;
++import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
++import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+ import com.google.android.gms.maps.CameraUpdateFactory;
+ import com.google.android.gms.maps.GoogleMap;
+ import com.google.android.gms.maps.OnMapReadyCallback;
+@@ -53,6 +58,8 @@
+ 
+     private Marker pickupMarker;
+ 
++    private String destination;
++
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+@@ -134,6 +141,21 @@
+                 return;
+             }
+         });
++
++        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
++                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
++
++        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
++            @Override
++            public void onPlaceSelected(Place place) {
++                // TODO: Get info about the selected place.
++                destination = place.getName().toString();
++            }
++            @Override
++            public void onError(Status status) {
++                // TODO: Handle the error.
++            }
++        });
+     }
+     private int radius = 1;
+     private Boolean driverFound = false;
+@@ -156,10 +178,11 @@
+                     driverFound = true;
+                     driverFoundID = key;
+ 
+-                    DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundID);
++                    DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundID).child("customerRequest");
+                     String customerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                     HashMap map = new HashMap();
+                     map.put("customerRideId", customerId);
++                    map.put("destination", destination);
+                     driverRef.updateChildren(map);
+ 
+                     getDriverLocation();

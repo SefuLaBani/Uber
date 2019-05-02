@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -18,8 +19,10 @@ import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -34,6 +37,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import com.google.android.libraries.places.compat.Place;
+import com.google.android.libraries.places.compat.ui.PlaceAutocompleteFragment;
+import com.google.android.libraries.places.compat.ui.PlaceSelectionListener;
 
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +59,8 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
     private Boolean requestBol = false;
 
     private Marker pickupMarker;
+
+    private String destination;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +127,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                     geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
 
                     pickupLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-                    pickupMarker = mMap.addMarker(new MarkerOptions().position(pickupLocation).title("Pickup here").icon(BitmapDescriptorFactory.fromResource(R.mipmap.pickup)));
+                    pickupMarker = mMap.addMarker(new MarkerOptions().position(pickupLocation).title("Pickup here").icon(BitmapDescriptorFactory.fromResource(R.mipmap.placeholder)));
 
                     mRequest.setText("Getting your driver...wait!");
 
@@ -134,6 +143,21 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                 return;
             }
         });
+
+
+            PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+                    getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+            autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+                @Override
+                public void onPlaceSelected(Place place) {
+                    destination = place.getName().toString();
+                }
+
+                @Override
+                public void onError(Status status) {
+                }
+            });
+
     }
     private int radius = 1;
     private Boolean driverFound = false;
@@ -156,10 +180,11 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                     driverFound = true;
                     driverFoundID = key;
 
-                    DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundID);
+                    DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundID).child("customerRequest");
                     String customerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
                     HashMap map = new HashMap();
                     map.put("customerRideId", customerId);
+                    map.put("destination", destination);
                     driverRef.updateChildren(map);
 
                     getDriverLocation();
@@ -218,7 +243,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                     LatLng driverLatLng = new LatLng(locationLat, locationLng);
                     if (mDriverMarker != null)
                     {
-                        //mDriverMarker.remove();
+                        mDriverMarker.remove();
                     }
                     Location loc1 = new Location("");
                     loc1.setLatitude(pickupLocation.latitude);
@@ -236,7 +261,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                         mRequest.setText("Driver Found: " + String.valueOf(distance));
                     }
 
-                    mDriverMarker = mMap.addMarker(new MarkerOptions().position(driverLatLng).title("your driver").icon(BitmapDescriptorFactory.fromResource(R.mipmap.pickup)));
+                    mDriverMarker = mMap.addMarker(new MarkerOptions().position(driverLatLng).title("your driver").icon(BitmapDescriptorFactory.fromResource(R.mipmap.car)));
                 }
             }
 
