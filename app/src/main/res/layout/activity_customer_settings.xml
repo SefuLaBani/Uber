@@ -7,6 +7,13 @@
     android:orientation="vertical"
     tools:context=".CustomerSettingsActivity"
     android:padding="20sp">
+    <ImageView
+        android:layout_width="100sp"
+        android:layout_height="100sp"
+        android:id="@+id/profileImage"
+        android:src="@mipmap/avatar"
+        android:layout_marginBottom="20sp"/>
+
 
     <EditText
         android:id="@+id/name"
