@@ -1,0 +1,172 @@
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>apply plugin: 'com.android.application'\r\n\r\nandroid {\r\n    compileSdkVersion 28\r\n    defaultConfig {\r\n        applicationId \"com.example.uber\"\r\n        minSdkVersion 21\r\n        targetSdkVersion 28\r\n        versionCode 1\r\n        versionName \"1.0\"\r\n        testInstrumentationRunner \"android.support.test.runner.AndroidJUnitRunner\"\r\n    }\r\n    buildTypes {\r\n        release {\r\n            minifyEnabled false\r\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\r\n        }\r\n    }\r\n}\r\n\r\ndependencies {\r\n    implementation fileTree(dir: 'libs', include: ['*.jar'])\r\n    //noinspection GradleCompatible\r\n    implementation 'com.android.support:appcompat-v7:28.0.0'\r\n    implementation 'com.android.support.constraint:constraint-layout:1.1.3'\r\n    implementation 'com.google.firebase:firebase-core:16.0.1'\r\n    implementation 'com.google.firebase:firebase-storage:16.1.0'\r\n    //implementation 'com.github.bumptech.glide:glide:4.0.0'\r\n\r\n    implementation 'com.android.support:cardview-v7:21.0.+'\r\n\r\n    implementation 'com.google.android.gms:play-services-places:16.0.0'\r\n    implementation 'com.google.android.libraries.places:places-compat:1.1.0'\r\n\r\n    implementation 'com.google.firebase:firebase-core:16.0.8'\r\n    implementation 'com.google.firebase:firebase-database:16.1.0'\r\n    implementation 'com.google.firebase:firebase-auth:16.2.1'\r\n    implementation 'com.google.android.gms:play-services-location:16.0.0'\r\n    implementation 'com.firebase:geofire-android:2.1.1'\r\n\r\n    implementation 'com.google.android.gms:play-services-maps:16.1.0'\r\n    testImplementation 'junit:junit:4.12'\r\n    androidTestImplementation 'com.android.support.test:runner:1.0.2'\r\n    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'\r\n}\r\napply plugin: 'com.google.gms.google-services'\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/build.gradle	(date 1556903089000)
++++ app/build.gradle	(date 1556905722771)
+@@ -37,6 +37,7 @@
+     implementation 'com.google.firebase:firebase-auth:16.2.1'
+     implementation 'com.google.android.gms:play-services-location:16.0.0'
+     implementation 'com.firebase:geofire-android:2.1.1'
++    implementation 'com.github.jd-alexander:library:1.1.0'
+ 
+     implementation 'com.google.android.gms:play-services-maps:16.1.0'
+     testImplementation 'junit:junit:4.12'
+Index: app/src/main/java/com/example/uber/DriverMapActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.uber;\r\n\r\nimport android.Manifest;\r\nimport android.content.Intent;\r\nimport android.content.pm.PackageManager;\r\nimport android.location.Location;\r\nimport android.location.LocationListener;\r\nimport android.support.annotation.NonNull;\r\nimport android.support.annotation.Nullable;\r\nimport android.support.v4.app.ActivityCompat;\r\nimport android.support.v4.app.FragmentActivity;\r\nimport android.os.Bundle;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.ImageView;\r\nimport android.widget.LinearLayout;\r\nimport android.widget.TextView;\r\n\r\nimport com.bumptech.glide.Glide;\r\nimport com.firebase.geofire.GeoFire;\r\nimport com.firebase.geofire.GeoLocation;\r\nimport com.google.android.gms.common.ConnectionResult;\r\nimport com.google.android.gms.common.api.GoogleApiClient;\r\nimport com.google.android.gms.location.LocationRequest;\r\nimport com.google.android.gms.location.LocationServices;\r\nimport com.google.android.gms.maps.CameraUpdateFactory;\r\nimport com.google.android.gms.maps.GoogleMap;\r\nimport com.google.android.gms.maps.OnMapReadyCallback;\r\nimport com.google.android.gms.maps.SupportMapFragment;\r\nimport com.google.android.gms.maps.model.BitmapDescriptor;\r\nimport com.google.android.gms.maps.model.BitmapDescriptorFactory;\r\nimport com.google.android.gms.maps.model.LatLng;\r\nimport com.google.android.gms.maps.model.Marker;\r\nimport com.google.android.gms.maps.model.MarkerOptions;\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\n\r\nimport java.util.List;\r\nimport java.util.ListIterator;\r\nimport java.util.Map;\r\n\r\npublic class DriverMapActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {\r\n\r\n    private GoogleMap mMap;\r\n    GoogleApiClient mGoogleApiClient;\r\n    Location mLastLocation;\r\n    LocationRequest mLocationRequest;\r\n\r\n    private Button mLogout, mSettings;\r\n\r\n    private String customerId = \"\";\r\n\r\n    private Boolean isLogginOut = false;\r\n\r\n    private SupportMapFragment mapFragment;\r\n\r\n    private LinearLayout mCustomerInfo;\r\n\r\n    private ImageView mCustomerProfileImage;\r\n\r\n    private TextView mCustomerName, mCustomerPhone, mCustomerDestination;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_driver_map);\r\n        // Obtain the SupportMapFragment and get notified when the map is ready to be used.\r\n        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()\r\n                .findFragmentById(R.id.map);\r\n        mapFragment.getMapAsync(this);\r\n\r\n        mCustomerInfo = (LinearLayout) findViewById(R.id.customerInfo);\r\n\r\n        mCustomerProfileImage = (ImageView) findViewById(R.id.customerProfileImage);\r\n\r\n        mCustomerName = (TextView) findViewById(R.id.customerName);\r\n        mCustomerPhone = (TextView) findViewById(R.id.customerPhone);\r\n        mCustomerDestination = (TextView) findViewById(R.id.customerDestination);\r\n\r\n        mSettings = (Button) findViewById(R.id.settings);\r\n        mLogout = (Button) findViewById(R.id.logout);\r\n        mLogout.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                isLogginOut = true;\r\n\r\n                disconnectDriver();\r\n\r\n                FirebaseAuth.getInstance().signOut();\r\n                Intent intent = new Intent(DriverMapActivity.this, MainActivity.class);\r\n                startActivity(intent);\r\n                finish();\r\n                return;\r\n            }\r\n        });\r\n        mSettings.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                Intent intent = new Intent(DriverMapActivity.this, DriverSettingsActivity.class);\r\n                startActivity(intent);\r\n                finish();\r\n                return;\r\n            }\r\n        });\r\n\r\n        getAssignedCustomer();\r\n    }\r\n\r\n    private void getAssignedCustomer(){\r\n        String driverId = FirebaseAuth.getInstance().getCurrentUser().getUid();\r\n        final DatabaseReference assignedCustomerRef = FirebaseDatabase.getInstance().getReference().child(\"Users\").child(\"Drivers\").child(driverId).child(\"customerRequest\").child(\"customerRideId\");\r\n        assignedCustomerRef.addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(DataSnapshot dataSnapshot) {\r\n                if(dataSnapshot.exists()){\r\n                    customerId = dataSnapshot.getValue().toString();\r\n                    getAssignedCustomerPickupLocation();\r\n                    getAssignedCustomerDestination();\r\n                    getAssignedCustomerInfo();\r\n                } else {\r\n                    customerId = \"\";\r\n                    if (pickupMarker != null) {\r\n                        pickupMarker.remove();\r\n                    }\r\n                    if (assignedCustomerPickupLocationRefListener != null) {\r\n                        assignedCustomerRef.removeEventListener(assignedCustomerPickupLocationRefListener);\r\n                    }\r\n                    mCustomerInfo.setVisibility(View.GONE);\r\n                    mCustomerName.setText(\"\");\r\n                    mCustomerPhone.setText(\"\");\r\n                    mCustomerDestination.setText(\"Destination: --\");\r\n                    mCustomerProfileImage.setImageResource(R.mipmap.avatar);\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(DatabaseError databaseError) {\r\n            }\r\n        });\r\n    }\r\n\r\n    Marker pickupMarker;\r\n    private DatabaseReference assignedCustomerPickupLocationRef;\r\n    private ValueEventListener assignedCustomerPickupLocationRefListener;\r\n    private void getAssignedCustomerPickupLocation() {\r\n        assignedCustomerPickupLocationRef = FirebaseDatabase.getInstance().getReference().child(\"customerRequest\").child(customerId).child(\"l\");\r\n        assignedCustomerPickupLocationRefListener = assignedCustomerPickupLocationRef.addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {\r\n                if (dataSnapshot.exists() && !customerId.equals(\"\")) {\r\n                    List<Object> map = (List<Object>) dataSnapshot.getValue();\r\n                    double locationLat = 0;\r\n                    double locationLng = 0;\r\n                    if (map.get(0) != null) {\r\n                        locationLat = Double.parseDouble(map.get(0).toString());\r\n                    }\r\n                    if (map.get(1) != null) {\r\n                        locationLng = Double.parseDouble(map.get(1).toString());\r\n                    }\r\n                    LatLng driverLatLng = new LatLng(locationLat, locationLng);\r\n                    pickupMarker = mMap.addMarker(new MarkerOptions().position(driverLatLng).title(\"pickup location\").icon(BitmapDescriptorFactory.fromResource(R.mipmap.placeholder)));\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError databaseError) {\r\n\r\n            }\r\n        });\r\n    }\r\n\r\n    private void getAssignedCustomerDestination(){\r\n        String driverId = FirebaseAuth.getInstance().getCurrentUser().getUid();\r\n        final DatabaseReference assignedCustomerRef = FirebaseDatabase.getInstance().getReference().child(\"Users\").child(\"Drivers\").child(driverId).child(\"customerRequest\").child(\"destination\");\r\n        assignedCustomerRef.addListenerForSingleValueEvent(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(DataSnapshot dataSnapshot) {\r\n                if(dataSnapshot.exists()){\r\n                    String destination = dataSnapshot.getValue().toString();\r\n                    mCustomerDestination.setText(\"Destination: \" + destination);\r\n                } else {\r\n                    mCustomerDestination.setText(\"Destination: --\");\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(DatabaseError databaseError) {\r\n            }\r\n        });\r\n    }\r\n\r\n    private void getAssignedCustomerInfo() {\r\n        mCustomerInfo.setVisibility(View.VISIBLE);\r\n        DatabaseReference mCustomerDatabase = FirebaseDatabase.getInstance().getReference().child(\"Users\").child(\"Customers\").child(customerId);\r\n        mCustomerDatabase.addListenerForSingleValueEvent(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {\r\n                if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {\r\n                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();\r\n                    if (map.get(\"name\") != null) {\r\n                        mCustomerName.setText(map.get(\"name\").toString());\r\n                    }\r\n                    if (map.get(\"phone\") != null) {\r\n                        mCustomerPhone.setText(map.get(\"phone\").toString());\r\n                    }\r\n                    if (map.get(\"profileImageUrl\") != null) {\r\n                        Glide.with(getApplication()).load(map.get(\"profileImageUrl\").toString()).into(mCustomerProfileImage);\r\n                    }\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError databaseError) {\r\n            }\r\n        });\r\n    }\r\n\r\n    @Override\r\n    public void onMapReady(GoogleMap googleMap) {\r\n        mMap = googleMap;\r\n\r\n        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {\r\n            return;\r\n        }\r\n        buildGoogleApiClient();\r\n        mMap.setMyLocationEnabled(true);\r\n    }\r\n\r\n    protected synchronized void buildGoogleApiClient() {\r\n        mGoogleApiClient = new GoogleApiClient.Builder(this)\r\n                .addConnectionCallbacks(this)\r\n                .addOnConnectionFailedListener(this)\r\n                .addApi(LocationServices.API)\r\n                .build();\r\n        mGoogleApiClient.connect();\r\n    }\r\n\r\n    @Override\r\n    public void onLocationChanged(Location location) {\r\n        if (getApplicationContext() != null) {\r\n\r\n            mLastLocation = location;\r\n            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());\r\n            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));\r\n            mMap.animateCamera(CameraUpdateFactory.zoomTo(11));\r\n\r\n            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();\r\n            DatabaseReference refAvailable = FirebaseDatabase.getInstance().getReference(\"driversAvailable\");\r\n            DatabaseReference refWorking = FirebaseDatabase.getInstance().getReference(\"driversWorking\");\r\n            GeoFire geoFireAvailable = new GeoFire(refAvailable);\r\n            GeoFire geoFireWorking = new GeoFire(refWorking);\r\n\r\n\r\n            switch (customerId) {\r\n                case \"\":\r\n                    geoFireWorking.removeLocation(userId);\r\n                    geoFireAvailable.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()));\r\n\r\n                    break;\r\n\r\n                default:\r\n                    geoFireAvailable.removeLocation(userId);\r\n                    geoFireWorking.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()));\r\n                    break ;\r\n            }\r\n        }\r\n    }\r\n\r\n\r\n    @Override\r\n    public void onConnected(@Nullable Bundle bundle) {\r\n        mLocationRequest = new LocationRequest();\r\n        mLocationRequest.setInterval(1000);\r\n        mLocationRequest.setFastestInterval(1000);\r\n        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);\r\n\r\n        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {\r\n            return;\r\n        }\r\n        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);\r\n    }\r\n\r\n    @Override\r\n    public void onConnectionSuspended(int i) {\r\n\r\n    }\r\n\r\n    @Override\r\n    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {\r\n\r\n    }\r\n\r\n    private void disconnectDriver() {\r\n        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);\r\n        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();\r\n        DatabaseReference ref = FirebaseDatabase.getInstance().getReference(\"driversAvailable\");\r\n\r\n        GeoFire geoFire = new GeoFire(ref);\r\n        geoFire.removeLocation(userId);\r\n    }\r\n\r\n    @Override\r\n    protected void onStop() {\r\n        super.onStop();\r\n        if (!isLogginOut) {\r\n            disconnectDriver();\r\n        }\r\n\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/uber/DriverMapActivity.java	(date 1556903089000)
++++ app/src/main/java/com/example/uber/DriverMapActivity.java	(date 1556907802464)
+@@ -15,8 +15,14 @@
+ import android.widget.ImageView;
+ import android.widget.LinearLayout;
+ import android.widget.TextView;
++import android.widget.Toast;
+ 
+ import com.bumptech.glide.Glide;
++import com.directions.route.AbstractRouting;
++import com.directions.route.Route;
++import com.directions.route.RouteException;
++import com.directions.route.Routing;
++import com.directions.route.RoutingListener;
+ import com.firebase.geofire.GeoFire;
+ import com.firebase.geofire.GeoLocation;
+ import com.google.android.gms.common.ConnectionResult;
+@@ -32,6 +38,8 @@
+ import com.google.android.gms.maps.model.LatLng;
+ import com.google.android.gms.maps.model.Marker;
+ import com.google.android.gms.maps.model.MarkerOptions;
++import com.google.android.gms.maps.model.Polyline;
++import com.google.android.gms.maps.model.PolylineOptions;
+ import com.google.firebase.auth.FirebaseAuth;
+ import com.google.firebase.database.DataSnapshot;
+ import com.google.firebase.database.DatabaseError;
+@@ -39,11 +47,13 @@
+ import com.google.firebase.database.FirebaseDatabase;
+ import com.google.firebase.database.ValueEventListener;
+ 
++import java.util.ArrayList;
+ import java.util.List;
+ import java.util.ListIterator;
+ import java.util.Map;
+ 
+-public class DriverMapActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
++public class DriverMapActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener, RoutingListener {
++
+ 
+     private GoogleMap mMap;
+     GoogleApiClient mGoogleApiClient;
+@@ -68,6 +78,7 @@
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_driver_map);
++        polylines = new ArrayList<>();
+         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                 .findFragmentById(R.id.map);
+@@ -122,6 +133,7 @@
+                     getAssignedCustomerDestination();
+                     getAssignedCustomerInfo();
+                 } else {
++                    erasePolylines();
+                     customerId = "";
+                     if (pickupMarker != null) {
+                         pickupMarker.remove();
+@@ -161,17 +173,27 @@
+                     if (map.get(1) != null) {
+                         locationLng = Double.parseDouble(map.get(1).toString());
+                     }
+-                    LatLng driverLatLng = new LatLng(locationLat, locationLng);
+-                    pickupMarker = mMap.addMarker(new MarkerOptions().position(driverLatLng).title("pickup location").icon(BitmapDescriptorFactory.fromResource(R.mipmap.placeholder)));
++                    LatLng pickupLatLng = new LatLng(locationLat, locationLng);
++                    pickupMarker = mMap.addMarker(new MarkerOptions().position(pickupLatLng).title("pickup location").icon(BitmapDescriptorFactory.fromResource(R.mipmap.placeholder)));
++                    getRouteToMarker(pickupLatLng);
+                 }
+             }
+ 
+             @Override
+             public void onCancelled(@NonNull DatabaseError databaseError) {
+-
+             }
+         });
+     }
++
++    private void getRouteToMarker(LatLng pickupLatLng){
++        Routing routing = new Routing.Builder()
++                .travelMode(AbstractRouting.TravelMode.DRIVING)
++                .withListener(this)
++                .alternativeRoutes(false)
++                .waypoints(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), pickupLatLng)
++                .build();
++        routing.execute();
++    }
+ 
+     private void getAssignedCustomerDestination(){
+         String driverId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+@@ -311,4 +333,58 @@
+         }
+ 
+     }
+-}
++
++    private List<Polyline> polylines;
++    private static final int[] COLORS = new int[] {R.color.colorAccent};
++
++    @Override
++    public void onRoutingFailure(RouteException e) {
++        if (e != null) {
++            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
++        } else {
++            Toast.makeText(this, "Something went wrong, Try again" + e.getMessage(), Toast.LENGTH_SHORT).show();
++        }
++    }
++
++    @Override
++    public void onRoutingStart() {
++
++    }
++
++    @Override
++    public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
++        if(polylines.size()>0) {
++            for (Polyline poly : polylines) {
++                poly.remove();
++            }
++        }
++
++        polylines = new ArrayList<>();
++        //add route(s) to the map.
++        for (int i = 0; i <route.size(); i++) {
++
++            //In case of more than 5 alternative routes
++            int colorIndex = i % COLORS.length;
++
++            PolylineOptions polyOptions = new PolylineOptions();
++            polyOptions.color(getResources().getColor(COLORS[colorIndex]));
++            polyOptions.width(10 + i * 3);
++            polyOptions.addAll(route.get(i).getPoints());
++            Polyline polyline = mMap.addPolyline(polyOptions);
++            polylines.add(polyline);
++
++            Toast.makeText(getApplicationContext(),"Route "+ (i+1) +": distance - "+ route.get(i).getDistanceValue()+": duration - "+ route.get(i).getDurationValue(),Toast.LENGTH_SHORT).show();
++        }
++
++    }
++    @Override
++    public void onRoutingCancelled() {
++    }
++    private void erasePolylines(){
++        for(Polyline line : polylines){
++            line.remove();
++        }
++        polylines.clear();
++    }
++}
++
