@@ -1,6 +1,7 @@
 package com.example.uber;
 
 import android.Manifest;
+import android.app.Notification;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -9,9 +10,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -52,6 +56,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.uber.Application.CHANNEL_1_ID;
+
 public class CustomerMapActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
     private GoogleMap mMap;
@@ -79,6 +85,9 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
 
     private RadioGroup mRadioGroup;
 
+    private NotificationManagerCompat notificationManager;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +97,8 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        notificationManager = NotificationManagerCompat.from(this);
 
         destinationLatLng = new LatLng(0.0, 0.0);
 
@@ -148,6 +159,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                     pickupMarker = mMap.addMarker(new MarkerOptions().position(pickupLocation).title("Pickup here").icon(BitmapDescriptorFactory.fromResource(R.mipmap.placeholder)));
 
                     mRequest.setText("Getting your driver...wait!");
+
 
                     getClosestDriver();
                 }
@@ -220,6 +232,9 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                                     driverRef.updateChildren(map);
 
                                     getDriverLocation();
+
+
+
                                     getDriverInfo();
                                     getHasRideEnded();
                                     mRequest.setText("Looking for Driver Location...");
@@ -299,6 +314,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                     float distance = loc1.distanceTo(loc2);
 
                     if (distance < 100) {
+                        sendOnChannel1(notificationManager);
                         mRequest.setText("Driver's here");
                     } else {
                         mRequest.setText("Driver Found: " + String.valueOf(distance));
@@ -400,6 +416,22 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
         mDriverPhone.setText("");
         mDriverCar.setText("");
         mDriverProfileImage.setImageResource(R.mipmap.avatar);
+    }
+
+    public void sendOnChannel1(NotificationManagerCompat notificationManager) {
+        String title = "Uber";
+        String message = "Uber is Here. Look around!";
+
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setVibrate(new long[]{Notification.DEFAULT_VIBRATE})
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .build();
+
+        notificationManager.notify(1, notification);
     }
 
     @Override

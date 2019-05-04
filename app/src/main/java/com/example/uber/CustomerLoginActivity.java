@@ -20,10 +20,11 @@ import com.google.firebase.database.FirebaseDatabase;
 public class CustomerLoginActivity extends AppCompatActivity {
 
     private EditText mEmail, mPassword;
-    private Button mLogin, mRegistration;
+    private Button mLogin, mRegistration, mBack;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +36,7 @@ public class CustomerLoginActivity extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                if (user!=null){
+                if (user != null) {
                     Intent intent = new Intent(CustomerLoginActivity.this, CustomerMapActivity.class);
                     startActivity(intent);
                     finish();
@@ -44,45 +45,67 @@ public class CustomerLoginActivity extends AppCompatActivity {
             }
         };
 
-        mEmail = (EditText)findViewById(R.id.email);
-        mPassword = (EditText)findViewById(R.id.password);
+        mEmail = (EditText) findViewById(R.id.email);
+        mPassword = (EditText) findViewById(R.id.password);
 
         mLogin = (Button) findViewById(R.id.login);
-        mRegistration = (Button)findViewById(R.id.registration);
+        mRegistration = (Button) findViewById(R.id.registration);
+        mBack = (Button) findViewById(R.id.back);
 
         mRegistration.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final String email = mEmail.getText().toString();
                 final String password = mPassword.getText().toString();
-                mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(CustomerLoginActivity.this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (!task.isSuccessful()){
-                            Toast.makeText(CustomerLoginActivity.this, "Sign up error", Toast.LENGTH_SHORT).show();
-                        } else {
-                            String user_id = mAuth.getCurrentUser().getUid();
-                            DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(user_id);
-                            current_user_db.setValue(true);
+                if (email.isEmpty() || password.isEmpty()) {
+                    Toast.makeText(CustomerLoginActivity.this, "Please complete all the fields!", Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(CustomerLoginActivity.this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (!task.isSuccessful()) {
+                                Toast.makeText(CustomerLoginActivity.this, "Sign up error", Toast.LENGTH_SHORT).show();
+                            } else {
+                                String user_id = mAuth.getCurrentUser().getUid();
+                                DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(user_id);
+                                current_user_db.setValue(true);
+                            }
                         }
-                    }
-                });
+                    });
+                }
+
             }
         });
 
         mLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String email = mEmail.getText().toString();
-                final String password = mPassword.getText().toString();
-                mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(CustomerLoginActivity.this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (!task.isSuccessful()){
-                            Toast.makeText(CustomerLoginActivity.this, "Log in error", Toast.LENGTH_SHORT).show();
+                    final String email = mEmail.getText().toString();
+                    final String password = mPassword.getText().toString();
+                if (email.isEmpty() || password.isEmpty()) {
+                    Toast.makeText(CustomerLoginActivity.this, "Please complete all the fields!", Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(CustomerLoginActivity.this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (!task.isSuccessful()) {
+                                Toast.makeText(CustomerLoginActivity.this, "Log in error", Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                });
+                    });
+                }
+            }
+        });
+
+        mBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CustomerLoginActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+                return;
             }
         });
     }
