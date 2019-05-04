@@ -57,6 +57,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.example.uber.Application.CHANNEL_1_ID;
+import static com.example.uber.Application.CHANNEL_2_ID;
 
 public class CustomerMapActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
@@ -86,6 +87,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
     private RadioGroup mRadioGroup;
 
     private NotificationManagerCompat notificationManager;
+    private NotificationManagerCompat notificationManager2;
 
 
 
@@ -99,6 +101,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
         mapFragment.getMapAsync(this);
 
         notificationManager = NotificationManagerCompat.from(this);
+        notificationManager2 = NotificationManagerCompat.from(this);
 
         destinationLatLng = new LatLng(0.0, 0.0);
 
@@ -157,7 +160,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
 
                     pickupLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
                     pickupMarker = mMap.addMarker(new MarkerOptions().position(pickupLocation).title("Pickup here").icon(BitmapDescriptorFactory.fromResource(R.mipmap.placeholder)));
-
+                    sendOnChannel2(notificationManager2);
                     mRequest.setText("Getting your driver...wait!");
 
 
@@ -432,6 +435,20 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                 .build();
 
         notificationManager.notify(1, notification);
+    }
+
+    public void sendOnChannel2(NotificationManagerCompat notificationManager2) {
+        String title = "Request";
+        String message = "You requested an uber ride";
+
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_2_ID)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .build();
+
+        notificationManager2.notify(2, notification);
     }
 
     @Override
