@@ -17,6 +17,8 @@
         android:id="@+id/password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="123456"
+        android:inputType="textPassword"
         android:hint="password" />
 
     <Button

@@ -66,7 +66,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
     Location mLastLocation;
     LocationRequest mLocationRequest;
 
-    private Button mLogout, mRequest, mSettings;
+    private Button mLogout, mRequest, mSettings, mPlaces;
 
     private LatLng pickupLocation;
 
@@ -121,6 +121,8 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
         mLogout = (Button) findViewById(R.id.logout);
         mRequest = (Button) findViewById(R.id.request);
         mSettings = (Button) findViewById(R.id.settings);
+        mPlaces = (Button) findViewById(R.id.places);
+
         mLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,6 +130,15 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                 Intent intent = new Intent(CustomerMapActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
+                return;
+            }
+        });
+
+        mPlaces.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CustomerMapActivity.this, MapsActivity.class);
+                startActivity(intent);
                 return;
             }
         });
@@ -140,31 +151,47 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
 
 
                 } else {
-                    int selectId = mRadioGroup.getCheckedRadioButtonId();
+                    DatabaseReference checkForAvailableDrivers = FirebaseDatabase.getInstance().getReference();
+                    checkForAvailableDrivers.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.hasChild("driversAvailable")) {
+                                int selectId = mRadioGroup.getCheckedRadioButtonId();
 
-                    final RadioButton radioButton = (RadioButton) findViewById(selectId);
+                                final RadioButton radioButton = (RadioButton) findViewById(selectId);
 
-                    if (radioButton.getText() == null) {
-                        return;
-                    }
+                                if (radioButton.getText() == null) {
+                                    return;
+                                }
 
-                    requestService = radioButton.getText().toString();
-
-
-                    requestBol = true;
-                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("customerRequest");
-                    GeoFire geoFire = new GeoFire(ref);
-                    geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
-
-                    pickupLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-                    pickupMarker = mMap.addMarker(new MarkerOptions().position(pickupLocation).title("Pickup here").icon(BitmapDescriptorFactory.fromResource(R.mipmap.placeholder)));
-                    sendOnChannel2(notificationManager2);
-                    mRequest.setText("Getting your driver...wait!");
+                                requestService = radioButton.getText().toString();
 
 
-                    getClosestDriver();
+                                requestBol = true;
+                                String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("customerRequest");
+                                GeoFire geoFire = new GeoFire(ref);
+                                geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+
+                                pickupLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                                pickupMarker = mMap.addMarker(new MarkerOptions().position(pickupLocation).title("Pickup here").icon(BitmapDescriptorFactory.fromResource(R.mipmap.placeholder)));
+                                sendOnChannel2(notificationManager2);
+                                mRequest.setText("Getting your driver...wait!");
+
+
+                                getClosestDriver();
+                            } else {
+                                openDialog();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
                 }
             }
         });
@@ -382,6 +409,11 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+    }
+
+    public void openDialog() {
+        DriverNotExistDialog exampleDialog = new DriverNotExistDialog();
+        exampleDialog.show(getSupportFragmentManager(), "Dialog");
     }
 
     private void endRide(){
